@@ -1,20 +1,30 @@
 class Biblioteca
   attr_reader :livros
+
   def initialize
-    @livros = {}
+    @banco_de_arquivos = BancoDeArquivos.new
   end
+
   def adiciona(livro)
-    @livros[livro.categoria] ||= []
-    @livros[livro.categoria] << livro
+    salva livro do
+      @livros[livro.categoria] ||= []
+      @livros[livro.categoria] << livro
+    end
   end
 
   def livros
-    @livros.values.flatten
+    @banco_de_arquivos ||= @banco_de_arquivos.carrega
   end
 
   def livros_por_categoria(categoria)
-    @livros[categoria].each do |livro|
-      yield livro if block_given?
-    end
+    @livros.select {
+      |livros| livro.categoria == categoria
+    }
+  end
+
+  private
+  def salva(livro)
+    @banco_de_arquivos.salva livro
+    yield
   end
 end
